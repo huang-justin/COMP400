@@ -8,7 +8,7 @@ import copy
 from HGTDGL.model import *
 
 # training entire graph on one subject
-def graphTransfer(trained_model,subject='H.2', lr=1e-3):
+def FineTune(trained_model,subject='H.2', lr=1e-3):
     data_url = 'https://data.dgl.ai/dataset/ACM.mat'
     data_file_path = './HGTDGL/tmp/ACM.mat'
 
