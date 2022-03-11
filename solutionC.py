@@ -8,7 +8,7 @@ import copy
 from HGTDGL.model import *
 
 # training entire graph on one subject
-def runC(subject='H.2'):
+def SolC(subject='H.2'):
 
     data_url = 'https://data.dgl.ai/dataset/ACM.mat'
     data_file_path = './HGTDGL/tmp/ACM.mat'
@@ -109,6 +109,7 @@ def runC(subject='H.2'):
     train_acc_list = []
     val_acc_list = []
     test_acc_list = []
+    time_list = []
 
     for epoch in range(100):
         logits = model(subgraph, 'paper')
@@ -123,6 +124,7 @@ def runC(subject='H.2'):
         train_acc_list.append(train_acc.item())
         val_acc_list.append(val_acc.item())
         test_acc_list.append(test_acc.item())
+        time_list.append(time.time()-start)
 
         optimizer.zero_grad()
         loss.backward()
@@ -152,4 +154,4 @@ def runC(subject='H.2'):
     best_model_training_time = best_time-start
     total_training_time = end-start
 
-    return best_model, best_model_training_time, total_training_time, train_acc_list, val_acc_list, test_acc_list
+    return best_model, best_model_training_time, total_training_time, time_list,train_acc_list, val_acc_list, test_acc_list

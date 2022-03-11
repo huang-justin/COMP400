@@ -7,7 +7,7 @@ import time
 import copy
 from HGTDGL.model import *
 
-def runA(test_subject=None):
+def SolA(test_subject=None):
     data_url = 'https://data.dgl.ai/dataset/ACM.mat'
     data_file_path = './HGTDGL/tmp/ACM.mat'
 
