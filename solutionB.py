@@ -8,7 +8,7 @@ import copy
 from HGTDGL.model import *
 
 # training entire graph on one subject
-def SolB(subject='H.2'):
+def SolB(subject):
 
     data_url = 'https://data.dgl.ai/dataset/ACM.mat'
     data_file_path = './HGTDGL/tmp/ACM.mat'
@@ -81,7 +81,6 @@ def SolB(subject='H.2'):
     train_step = 0
 
     start = time.time()
-    best_time = time.time()
     best_model = copy.deepcopy(model)
 
     train_acc_list = []
@@ -98,11 +97,12 @@ def SolB(subject='H.2'):
         train_acc = (pred[train_idx] == labels[train_idx]).float().mean()
         val_acc   = (pred[val_idx] == labels[val_idx]).float().mean()
         test_acc  = (pred[test_idx] == labels[test_idx]).float().mean()
+        curr_time = time.time()
 
         train_acc_list.append(train_acc.item())
         val_acc_list.append(val_acc.item())
         test_acc_list.append(test_acc.item())
-        time_list.append(time.time()-start)
+        time_list.append(curr_time-start)
 
         optimizer.zero_grad()
         loss.backward()
@@ -113,7 +113,6 @@ def SolB(subject='H.2'):
         if best_val_acc < val_acc:
             best_val_acc = val_acc
             best_test_acc = test_acc
-            best_time = time.time()
             best_model = copy.deepcopy(model)
 
         if epoch % 10 == 0:
@@ -127,9 +126,12 @@ def SolB(subject='H.2'):
             best_test_acc.item(),
         ))
 
-    end = time.time()
-    
-    best_model_training_time = best_time-start
-    total_training_time = end-start
+    results = {}
+    results['best_model'] = best_model
+    results['last_model'] = model
+    results['time_list'] = time_list
+    results['train_acc_list'] = train_acc_list
+    results['val_acc_list'] = val_acc_list
+    results['test_acc_list'] = test_acc_list
 
-    return best_model, best_model_training_time, total_training_time, time_list, train_acc_list, val_acc_list, test_acc_list
+    return results

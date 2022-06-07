@@ -77,12 +77,12 @@ def SolA(test_subject=None):
     train_step = 0
 
     start = time.time()
-    best_time = time.time()
     best_model = copy.deepcopy(model)
 
     train_acc_list = []
     val_acc_list = []
     test_acc_list = []
+    time_list = []
 
     for epoch in range(100):
         logits = model(G, 'paper')
@@ -93,10 +93,12 @@ def SolA(test_subject=None):
         train_acc = (pred[train_idx] == labels[train_idx]).float().mean()
         val_acc   = (pred[val_idx] == labels[val_idx]).float().mean()
         test_acc  = (pred[test_idx] == labels[test_idx]).float().mean()
+        curr_time = time.time()
 
         train_acc_list.append(train_acc.item())
         val_acc_list.append(val_acc.item())
         test_acc_list.append(test_acc.item())
+        time_list.append(curr_time-start)
 
         optimizer.zero_grad()
         loss.backward()
@@ -107,7 +109,6 @@ def SolA(test_subject=None):
         if best_val_acc < val_acc:
             best_val_acc = val_acc
             best_test_acc = test_acc
-            best_time = time.time()
             best_model = copy.deepcopy(model)
 
         if epoch % 10 == 0:
@@ -121,9 +122,12 @@ def SolA(test_subject=None):
             best_test_acc.item(),
         ))
 
-    end = time.time()
-    
-    best_model_training_time = best_time-start
-    total_training_time = end-start
+    results = {}
+    results['best_model'] = best_model
+    results['last_model'] = model
+    results['time_list'] = time_list
+    results['train_acc_list'] = train_acc_list
+    results['val_acc_list'] = val_acc_list
+    results['test_acc_list'] = test_acc_list
 
-    return best_model, best_model_training_time, total_training_time, train_acc_list, val_acc_list, test_acc_list
+    return results
